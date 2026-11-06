@@ -1,0 +1,3 @@
+[submodule "vendor/contract"]
+	path = vendor/contract
+	url = https://github.com/Railgun-Privacy/contract

@@ -1,0 +1,15 @@
+{
+  "name": "pool-watcher-demo",
+  "private": true,
+  "type": "module",
+  "dependencies": {
+    "@railgun-community/shared-models": "7.6.1",
+    "@railgun-community/wallet": "10.4.0",
+    "ethers": "6.13.1",
+    "leveldown": "6.1.1",
+    "snarkjs": "0.7.6"
+  },
+  "devDependencies": {
+    "tsx": "4.23.15"
+  }
+}
