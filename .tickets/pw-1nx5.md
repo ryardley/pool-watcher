@@ -1,6 +1,6 @@
 ---
 id: pw-1nx5
-status: open
+status: closed
 deps: [pw-z7gq]
 links: []
 created: 2026-11-06T15:44:51Z

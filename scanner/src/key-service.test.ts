@@ -36,6 +36,10 @@ test('local KeyService decodes base64(viewingKeyHex) to raw key bytes', async ()
   assert.equal(Buffer.from(bytes).toString('hex'), hex);
 });
 
+test('local KeyService has no public key', () => {
+  assert.throws(() => new LocalKeyService().publicKey());
+});
+
 test('sealedbox KeyService exposes a base64 X25519 public key', () => {
   const service = new SealedBoxKeyService();
   const pub = Buffer.from(service.publicKey(), 'base64');

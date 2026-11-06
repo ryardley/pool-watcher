@@ -1,6 +1,7 @@
 //! Cross-language protocol tests: spawn the real Node scanner and drive it with
 //! the Rust handle. These exercise the wire contract, not Node agreeing with Node.
 
+use base64::Engine;
 use railgun_scanner_handle::{Event, Handle, HandleError};
 use scanner_protocol_tests::{
     key_ciphertext, load_fixture, load_keys, ScannerProcess,
@@ -160,6 +161,32 @@ fn scan_for_wallet_b() {
 
     // Balance arithmetic: received minus unshielded.
     assert_eq!(balance(&events), 185_000_000_000_000_000_000);
+}
+
+#[test]
+fn pubkey_returns_public_key() {
+    let scanner = ScannerProcess::spawn_with_key_service("sealedbox");
+    let mut handle = Handle::connect(scanner.socket()).expect("connect");
+
+    // X25519 public keys are 32 bytes, base64-encoded.
+    let pubkey = handle.pubkey().expect("pubkey");
+    let decoded = base64::engine::general_purpose::STANDARD
+        .decode(&pubkey)
+        .expect("public key is base64");
+    assert_eq!(decoded.len(), 32);
+}
+
+#[test]
+fn pubkey_with_local_key_service_errors() {
+    let scanner = ScannerProcess::spawn();
+    let mut handle = Handle::connect(scanner.socket()).expect("connect");
+    let err = handle.pubkey().expect_err("pubkey with local KeyService");
+    match err {
+        HandleError::Protocol(message) => {
+            assert!(message.contains("public key"), "message: {message}")
+        }
+        other => panic!("unexpected error: {other:?}"),
+    }
 }
 
 #[test]

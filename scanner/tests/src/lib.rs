@@ -48,6 +48,10 @@ pub struct ScannerProcess {
 
 impl ScannerProcess {
     pub fn spawn() -> Self {
+        Self::spawn_with_key_service("local")
+    }
+
+    pub fn spawn_with_key_service(key_service: &str) -> Self {
         ensure_built();
         let run_dir = scanner_dir().join(".run");
         fs::create_dir_all(&run_dir).expect("create .run");
@@ -59,6 +63,7 @@ impl ScannerProcess {
             .arg("dist/index.js")
             .current_dir(scanner_dir())
             .env("SCANNER_SOCKET", &socket)
+            .env("KEY_SERVICE", key_service)
             .stdout(Stdio::null())
             .stderr(Stdio::null())
             .spawn()

@@ -29,6 +29,7 @@ the wire structs; the Node scanner mirrors them.
 ```
 init  { keyCiphertext }                          -> ready { walletAddress }
 scan  { blocks: [{ chainId, logs: [raw logs] }] } -> events { events: [...] }
+pubkey                                            -> pubkey { publicKey }
 ping                                              -> pong
 ```
 
@@ -48,7 +49,8 @@ interface KeyService {
 ```
 
 `local` (dev): `keyCiphertext` is `base64(viewingKeyHex)`, where `viewingKeyHex`
-is the shareable viewing key; `publicKey()` returns a placeholder. `sealedbox`
+is the shareable viewing key; `publicKey()` throws (no real public key).
+`sealedbox`
 (demo): the scanner generates an X25519 keypair at boot, `publicKey()` returns
 the base64 public key, and `decrypt` opens a sealed box (X25519 + HKDF-SHA256 +
 XChaCha20-Poly1305) to recover the viewing key. `nitro` is a future build-time

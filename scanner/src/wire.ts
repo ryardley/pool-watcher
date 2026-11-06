@@ -19,6 +19,7 @@ export type BlockLogs = z.infer<typeof BlockLogsSchema>;
 export const RequestSchema = z.discriminatedUnion('op', [
   z.object({ op: z.literal('init'), keyCiphertext: z.string().min(1) }),
   z.object({ op: z.literal('scan'), blocks: z.array(BlockLogsSchema) }),
+  z.object({ op: z.literal('pubkey') }),
   z.object({ op: z.literal('ping') }),
 ]);
 export type Request = z.infer<typeof RequestSchema>;
@@ -51,6 +52,10 @@ export const EventsResponseSchema = z.object({
   op: z.literal('events'),
   events: z.array(EventSchema),
 });
+export const PubkeyResponseSchema = z.object({
+  op: z.literal('pubkey'),
+  publicKey: z.string(),
+});
 export const PongResponseSchema = z.object({ op: z.literal('pong') });
 export const ErrorResponseSchema = z.object({
   op: z.literal('error'),
@@ -59,6 +64,7 @@ export const ErrorResponseSchema = z.object({
 export const ResponseSchema = z.discriminatedUnion('op', [
   ReadyResponseSchema,
   EventsResponseSchema,
+  PubkeyResponseSchema,
   PongResponseSchema,
   ErrorResponseSchema,
 ]);

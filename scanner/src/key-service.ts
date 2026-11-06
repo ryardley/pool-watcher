@@ -23,7 +23,7 @@ export class LocalKeyService implements KeyService {
   }
 
   publicKey(): string {
-    return '';
+    throw new Error('local KeyService has no public key');
   }
 }
 

@@ -112,7 +112,8 @@ interface KeyService {
 ```
 
 - **local** (dev, tests): `keyCiphertext` is `base64(viewingKeyHex)`. No real
-  crypto, same wire shape. `publicKey()` returns a placeholder.
+  crypto, same wire shape. `publicKey()` throws (no real public key); the
+  server responds with a clear error.
 - **sealedbox** (demo): the scanner generates an X25519 keypair at boot;
   `publicKey()` returns the base64 public key; `decrypt` opens a sealed box
   (X25519 + HKDF-SHA256 + XChaCha20-Poly1305 via

@@ -53,6 +53,13 @@ export function createServer(options: ScannerOptions): net.Server {
         );
         return { op: 'events', events };
       }
+      case 'pubkey': {
+        try {
+          return { op: 'pubkey', publicKey: keyService.publicKey() };
+        } catch (err) {
+          return { op: 'error', message: `pubkey unavailable: ${errorMessage(err)}` };
+        }
+      }
       default:
         return { op: 'error', message: 'unknown op' };
     }
