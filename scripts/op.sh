@@ -1,4 +1,6 @@
 #!/usr/bin/env bash
+# op.sh: generic runner that dispatches a named demo operation
+# (e.g. shield, transfer, unshield, balances, create-wallets) to demo/src/ops/$name.ts.
 set -euo pipefail
 ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 cd "$ROOT"

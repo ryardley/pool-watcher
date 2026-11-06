@@ -1,4 +1,6 @@
 #!/usr/bin/env bash
+# chain.sh: starts the local anvil chain (with state persistence) if it is not
+# already running, and records the PID in .state/anvil.pid.
 set -euo pipefail
 ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 cd "$ROOT"

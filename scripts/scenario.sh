@@ -1,4 +1,6 @@
 #!/usr/bin/env bash
+# scenario.sh: runs the end-to-end demo scenario on a fresh chain — setup, shield,
+# a series of transfers, an unshield, and balance/keys reporting.
 set -euo pipefail
 cd "$(dirname "$0")"
 

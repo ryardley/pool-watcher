@@ -1,4 +1,5 @@
 #!/usr/bin/env bash
+# stop-chain.sh: gracefully stops the local anvil chain and cleans up its PID file.
 set -euo pipefail
 ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 cd "$ROOT"

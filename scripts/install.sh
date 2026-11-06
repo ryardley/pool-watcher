@@ -1,4 +1,6 @@
 #!/usr/bin/env bash
+# install.sh: idempotent one-time setup — creates test wallets, syncs the
+# vendor/contract submodule, applies patches, and installs/compiles dependencies.
 set -euo pipefail
 ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 cd "$ROOT"

@@ -1,4 +1,6 @@
 #!/usr/bin/env bash
+# deploy.sh: deploys the contracts to the local chain, records addresses and the
+# deployment block in .state/deployment.json, and registers production vkeys.
 set -euo pipefail
 ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 cd "$ROOT"
