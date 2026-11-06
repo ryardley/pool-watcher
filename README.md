@@ -50,6 +50,26 @@ scripts/reset.sh        # stop the chain, delete .state/ and out/
 
 `setup.sh` is idempotent: a second run prints only `skip:` lines.
 
+## Ralph loop
+
+Work through the tk tickets one at a time. For each ready (non-epic) ticket it
+runs `opencode run` once to implement it and once to verify it (the verifier
+must end with `VERDICT: PASS`), then `tk close`s the ticket and commits
+`feat: <title>`. On a failed verification it retries with the verifier's
+reason fed back, up to `RALPH_MAX_ATTEMPTS` (default 3), then stops.
+
+Run it inside the devenv shell (needs `tk` and `opencode` on `PATH`):
+
+```sh
+scripts/ralph.sh            # all ready tickets, one at a time
+scripts/ralph.sh pw-4hz9    # just one ticket (must be ready)
+scripts/ralph.sh --dry-run  # print the plan without doing anything
+```
+
+Env: `RALPH_MAX_ATTEMPTS` (3), `RALPH_MAX_ITERATIONS` (100), `RALPH_MODEL`,
+`RALPH_AGENT`. Logs go to `.ralph/logs/` (gitignored). The working tree must
+be clean before a run.
+
 ## Storage
 
 | Location | Contents | Size | Removed by |

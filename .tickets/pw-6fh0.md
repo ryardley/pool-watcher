@@ -10,5 +10,21 @@ tags: [scanner]
 ---
 # Scanner: stateless trial-decryption service
 
-One Unix socket per viewing key, with Rust handle (protocol + acceptance tests). See docs/scanner/spec.md.
+## Description
+
+The stateless Railgun trial-decryption service: one Unix socket per viewing
+key, with a Rust handle (protocol + acceptance tests). See
+`docs/scanner/spec.md`.
+
+## Acceptance Criteria
+
+- `init` → `ready`; `scan` (fixture) → `events`; `ping` → `pong`; error cases
+  handled.
+- Unit tests (Node) and protocol tests (Rust handle) pass.
+- End-to-end acceptance (`scanner/scripts/acceptance.sh`) reconstructs
+  `out/steps.jsonl` from real chain logs.
+
+## References
+
+- `docs/scanner/spec.md`
 
