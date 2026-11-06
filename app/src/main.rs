@@ -27,6 +27,6 @@ async fn main() -> Result<()> {
     let scanner = scanner::spawn(&config);
     let ledger = ledger::Ledger::new();
     ledger.write(&config.ledger_path)?;
-    let listener = listener::Listener::spawn(config.clone(), ledger);
+    let listener = listener::Listener::spawn(config.clone(), scanner.clone(), ledger);
     web::serve(config, scanner, listener).await
 }

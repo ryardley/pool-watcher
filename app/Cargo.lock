@@ -973,6 +973,7 @@ dependencies = [
  "base64 0.22.1",
  "bigdecimal",
  "chrono",
+ "futures",
  "railgun-scanner-handle",
  "serde",
  "serde_json",

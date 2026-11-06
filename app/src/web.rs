@@ -258,7 +258,7 @@ mod tests {
 
         let config = test_config();
         let scanner = crate::scanner::spawn_with(socket, Duration::from_secs(2));
-        let listener = Listener::spawn(config, Ledger::new());
+        let listener = Listener::spawn(config, scanner.clone(), Ledger::new());
         (scanner, listener, mock, stop)
     }
 
