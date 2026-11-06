@@ -1,0 +1,53 @@
+services:
+  scanner-b:
+    build:
+      context: ./scanner
+      dockerfile: Dockerfile
+    environment:
+      KEY_SERVICE: sealedbox
+      SCANNER_SOCKET: /run/scanner/scanner-b.sock
+    volumes:
+      - scanner-sock:/run/scanner
+
+  app:
+    build:
+      context: .
+      dockerfile: app/Dockerfile
+    environment:
+      RPC_URL: http://host.docker.internal:8545
+      WS_URL: ws://host.docker.internal:8545
+      CHAIN_ID: "31337"
+      SCANNER_SOCKET: /run/scanner/scanner-b.sock
+      DEPLOYMENT_PATH: /data/.state/deployment.json
+      LEDGER_PATH: /ledger/ledger.beancount
+      BIND_ADDR: 0.0.0.0:8080
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    volumes:
+      - scanner-sock:/run/scanner
+      - ./.state:/data/.state:ro
+      - ledger:/ledger
+    ports:
+      - "8080:8080"
+    depends_on:
+      - scanner-b
+
+  fava:
+    image: python:3-slim
+    entrypoint:
+      - /bin/sh
+      - -c
+      - |
+        pip install --no-cache-dir fava
+        until [ -f /ledger/ledger.beancount ]; do sleep 1; done
+        exec fava /ledger/ledger.beancount --host 0.0.0.0 --port 5000
+    volumes:
+      - ledger:/ledger
+    ports:
+      - "5000:5000"
+    depends_on:
+      - app
+
+volumes:
+  scanner-sock:
+  ledger:
