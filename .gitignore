@@ -9,4 +9,5 @@ out/
 scanner/dist/
 scanner/target/
 scanner/.run/
+app/target/
 .ralph/
