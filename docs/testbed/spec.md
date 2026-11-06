@@ -89,10 +89,13 @@ pool-watcher/
   README.md  docs/  .gitignore
   docs/
     AGENTS.md               # agent entry point + workflow
-    backlog.md  notes.md    # living board + append-only findings
+    notes.md                # append-only findings
     testbed/spec.md         # this file
     scanner/
       spec.md               # scanner reference spec
+    app/
+      spec.md               # accounting demo spec
+  .tickets/                 # tk tickets (git-native task board)
   vendor/contract/          # git submodule: github.com/Railgun-Privacy/contract
                             # pinned to 665a08e80d38c96e51316c30216edbb4168aaf69
                             # (2025-06-05, same era as wallet SDK 10.4.0; still

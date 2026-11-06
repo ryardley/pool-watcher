@@ -13,7 +13,7 @@ trial-decrypts the resulting history for a viewing key.
 
 | File | Purpose | How it changes |
 |---|---|---|
-| `docs/backlog.md` | The living board: **In progress / Next / Backlog / Done** | Grows as you work; items move down the columns |
+| `.tickets/` | tk tickets: the living board (open / in_progress / closed, deps, priorities) | `tk create/start/close/dep` |
 | `docs/notes.md` | Findings, gotchas, workarounds | Append-only, short bullets, write as you hit them |
 | `docs/testbed/spec.md` | Test bed reference spec (build, scripts, ops, scenario) | Reference; update when the test bed changes |
 | `docs/scanner/spec.md` | Scanner reference spec (protocol, decryption, KeyService, testing) | Reference; update when the scanner changes |
@@ -21,20 +21,28 @@ trial-decrypts the resulting history for a viewing key.
 
 User-facing component docs stay with their components (`README.md`).
 
-## Workflow
+## Task tracking (tk)
 
-Dynamic and agile — no upfront full plan. Work a bit, then add the next thing
-as you see it:
+This project uses a CLI ticket system for task management. Run `tk help` when
+you need to use it. Tickets are markdown files with YAML frontmatter in
+`.tickets/` (git-native, no daemon, no DB).
 
-1. **Idea occurs** -> append a checkbox to **Backlog** in `docs/backlog.md`.
-2. **About to start it** -> move the line up to **Next** (one or two items).
-3. **Doing it** -> move to **In progress**.
-4. **Finished** -> move to **Done** with a one-line outcome. If it surprised
-   you, drop a bullet in `docs/notes.md`.
+Workflow:
 
-To add the next phase: write its items into the backlog, promote the first one
-to **Next**, and start. The specs above are updated only when the component
-they describe actually changes.
+1. **Idea occurs** -> `tk create "<title>" -d "<context>"` (optionally
+   `--parent <epic>` to attach to a phase, `--tags`, `-p` priority).
+2. **About to start it** -> it appears in `tk ready` once its dependencies are
+   resolved.
+3. **Doing it** -> `tk start <id>`.
+4. **Finished** -> `tk close <id>`; if it surprised you, drop a bullet in
+   `docs/notes.md`.
+
+Useful commands: `tk ready` (deps resolved), `tk blocked` (waiting on deps),
+`tk show <id>`, `tk dep <id> <dep-id>`, `tk dep tree <id>`, `tk closed`.
+
+To add the next phase: create an epic (`-t epic`), create its tickets with
+`--parent <epic>`, and wire up `tk dep` edges. The specs above are updated only
+when the component they describe actually changes.
 
 ## Components
 
