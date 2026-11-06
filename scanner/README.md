@@ -5,7 +5,7 @@ viewing key. It trial-decrypts `Shield` / `Transact` / `Unshield` logs for a
 viewing key and returns the events it found. It never spends, so it holds no
 merkle tree, no database, no RPC and no network access.
 
-See `TASK.md` for the full specification.
+See `../docs/scanner/spec.md` for the full specification.
 
 ## Build and run
 

@@ -1,4 +1,4 @@
-# Task: scanner — stateless Railgun trial-decryption service
+# Scanner spec — stateless Railgun trial-decryption service
 
 A component for an accounting system that tracks wallets for transactions. It
 trial-decrypts Railgun events for a viewing key and returns the events it
@@ -108,11 +108,13 @@ interface KeyService {
 
 ```
 scanner/
-  TASK.md
   src/            # Node scanner (socket server)
   crates/handle/  # Rust client: wire structs + connect/send/recv
   tests/          # protocol tests: spawn the scanner, drive it via the Rust handle
 ```
+
+The task specification lives in `../docs/scanner/spec.md` (this file), not in
+the component directory.
 
 ## Rust handle (production client)
 

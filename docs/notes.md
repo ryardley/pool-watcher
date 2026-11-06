@@ -1,4 +1,7 @@
-# Notes
+# Notes and findings
+
+Append-only. Anything surprising, non-obvious, or a workaround goes here as a
+short bullet, right when you hit it.
 
 ## Phase 0 findings
 

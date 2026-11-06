@@ -1,2 +1,0 @@
-- Everywhere in production code in the scanner where we use 'as' eg. `JSON.parse(line) as Request` use zod to formulate the type
-- Define the actual Typescript types using zod schemas.
