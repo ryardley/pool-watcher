@@ -11,6 +11,13 @@ or enter the shell with `devenv shell`.
 
 ## Commands
 
+Generate wallets and print their addresses + viewing keys (requires the chain
+and deployment, so it runs the full setup):
+
+```sh
+scripts/wallets.sh
+```
+
 Run the whole scenario from a clean state:
 
 ```sh
@@ -74,3 +81,10 @@ to keep the full history.
 
 The `scanner/` component consumes these logs: it trial-decrypts them for a
 viewing key and returns the events. See `scanner/README.md`.
+
+## Accounting demo
+
+`app/` is a docker-compose accounting demo: an actix-web UI where you paste a
+viewing key (sealed client-side to the scanner's X25519 pubkey), an alloy
+listener that feeds the scanner, and a Beancount merchant ledger served by
+Fava. See `docs/app/spec.md` for the full spec and demo flow.

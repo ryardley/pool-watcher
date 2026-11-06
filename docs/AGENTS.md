@@ -16,7 +16,8 @@ trial-decrypts the resulting history for a viewing key.
 | `docs/backlog.md` | The living board: **In progress / Next / Backlog / Done** | Grows as you work; items move down the columns |
 | `docs/notes.md` | Findings, gotchas, workarounds | Append-only, short bullets, write as you hit them |
 | `docs/testbed/spec.md` | Test bed reference spec (build, scripts, ops, scenario) | Reference; update when the test bed changes |
-| `docs/scanner/spec.md` | Scanner reference spec (protocol, decryption, testing) | Reference; update when the scanner changes |
+| `docs/scanner/spec.md` | Scanner reference spec (protocol, decryption, KeyService, testing) | Reference; update when the scanner changes |
+| `docs/app/spec.md` | Accounting demo spec: actix-web UI + alloy listener + Beancount/Fava | Reference; update when the integration app changes |
 
 User-facing component docs stay with their components (`README.md`).
 
@@ -42,3 +43,6 @@ they describe actually changes.
 - **Scanner** — `docs/scanner/spec.md`. Stateless trial-decryption service,
   one Unix socket per viewing key, Rust handle as the wire-contract source of
   truth.
+- **App** — `docs/app/spec.md`. Accounting demo: actix-web UI (paste a viewing
+  key, sealed client-side to the scanner's X25519 pubkey), alloy listener,
+  Beancount merchant ledger served by Fava.

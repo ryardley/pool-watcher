@@ -9,7 +9,8 @@ found. It can never spend, so it holds no merkle tree, no database, no state.
 ```
 init  { keyCiphertext }                          -> ready
 scan  { blocks: [{ chainId, logs: [raw logs] }] } -> events: [...]
-ping                                              -> pong
+pubkey                                              -> pubkey
+ping                                                -> pong
 ```
 
 - One process + one Unix socket per viewing key.
@@ -54,12 +55,22 @@ ping                                              -> pong
 - Caller batches freely and may mix chains in one request.
 - Returns `{ "op": "events", "events": [...] }`.
 
+### pubkey
+
+```
+{ "op": "pubkey" } -> { "op": "pubkey", "publicKey": "<base64>" }
+```
+
+- Returns the scanner's X25519 public key so a client can seal a viewing key
+  to it. Only meaningful when `KEY_SERVICE=sealedbox`; the `local` service
+  returns a placeholder or errors.
+
 ### event
 
 ```
 { "chainId", "walletAddress", "address", "blockNumber", "txHash", "logIndex",
   "kind": "shield" | "transact" | "unshield",
-  "hash", "token", "value", "outputType",
+  "hash", "token", "value", "fee", "outputType",
   "direction": "in" | "out",
   "sender", "receiver", "memo" }
 ```
@@ -69,6 +80,10 @@ ping                                              -> pong
 - `chainId` (the pool link) and log linkage (`address`, `blockNumber`,
   `txHash`, `logIndex`) are echoed into every event.
 - `direction` is derived per-note from the trial-decrypt outcome, no state.
+- `fee` is non-null only for `unshield`: the contract emits
+  `Unshield(to, token, base, fee)` where `base` is already net of `fee`; the
+  scanner reports `value = base + fee` (the gross leaving the private balance)
+  and `fee` separately, so consumers can post `net = value - fee`.
 
 ## Decryption
 
@@ -92,11 +107,18 @@ The scanner core depends on a single interface:
 ```ts
 interface KeyService {
   decrypt(keyCiphertext: string): Promise<Uint8Array>;  // viewing key bytes
+  publicKey(): string;                                   // X25519 public key, base64
 }
 ```
 
-- **local** (dev): `keyCiphertext` is `base64(viewingKeyHex)`. No real crypto,
-  same wire shape.
+- **local** (dev, tests): `keyCiphertext` is `base64(viewingKeyHex)`. No real
+  crypto, same wire shape. `publicKey()` returns a placeholder.
+- **sealedbox** (demo): the scanner generates an X25519 keypair at boot;
+  `publicKey()` returns the base64 public key; `decrypt` opens a sealed box
+  (X25519 + HKDF-SHA256 + XChaCha20-Poly1305 via
+  `@noble/curves`/`@noble/ciphers`/`@noble/hashes`) to recover the viewing-key
+  hex string, then hex-decodes it. Envelope: `ephemeralPublic(32) || nonce(24)
+  || ciphertext`; key = `hkdf(sha256, shared, "", "railgun-scanner-vk", 32)`.
 - **nitro** (future, not built now): customer ECIES-encrypts the viewing key
   to a private key generated at enclave boot (pubkey distributed via
   attestation); `decrypt` uses the in-enclave key. No outbound network.
@@ -123,11 +145,11 @@ the socket. Its request/response structs are the **source of truth for the
 wire contract**; the Node scanner mirrors them (contract-first).
 
 - Thin and sync: std `UnixStream` + `serde`/`serde_json`. No tokio.
-- Defines the wire structs: `Init`, `Scan`, `Ping`, `Ready`, `Events`,
-  `Pong`, `Error`, `Event` — one JSON object per line, matching the protocol
-  above.
-- Exposes a small API: `connect(path)`, `init(keyCiphertext)`, `scan(blocks)`,
-  `ping()`.
+- Defines the wire structs: `Init`, `Scan`, `Pubkey`, `Ping`, `Ready`,
+  `Events`, `Pong`, `Error`, `Event` — one JSON object per line, matching the
+  protocol above. `Event` carries `fee: Option<String>`.
+- Exposes a small API: `connect(path)`, `init(keyCiphertext)`,
+  `scan(blocks)`, `pubkey()`, `ping()`.
 - Built and tested alongside the scanner; also used as the level-3 protocol
   test client.
 - Requires the Rust toolchain: add `languages.rust.enable = true` to
@@ -158,7 +180,8 @@ Layered, cheapest first. The test bed generates ground-truth history.
 
 - Docker base `node:26-alpine` (fallback `node:24-alpine` if the 2025-era SDK
   misbehaves; no `engines` constraint, deps are pure JS/wasm).
-- `ARG KEY_SERVICE=local` wires the KeyService implementation at build time.
+- `ARG KEY_SERVICE=local` wires the KeyService implementation at build time;
+  the accounting demo builds with `KEY_SERVICE=sealedbox`.
 - Entrypoint: single `node dist/index.js` that binds the socket and serves
   the protocol.
 

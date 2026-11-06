@@ -99,7 +99,7 @@ pool-watcher/
                             # deploys RelayAdapt, so addresses match shared-models)
   scripts/
     install.sh  chain.sh  stop-chain.sh  deploy.sh  setup.sh
-    op.sh  scenario.sh  reset.sh
+    op.sh  scenario.sh  wallets.sh  reset.sh
   demo/                     # TypeScript, ethers v6, npm
     package.json  package-lock.json  tsconfig.json
     src/
@@ -109,6 +109,9 @@ pool-watcher/
         create-wallets.ts  fund.ts  shield.ts  transfer.ts  unshield.ts
         balances.ts  export-keys.ts
   scanner/                  # see docs/scanner/spec.md
+  app/                      # accounting demo (actix-web + alloy + Beancount/Fava);
+                            # see docs/app/spec.md — build context for its Dockerfile
+                            # is the repo root so it can path-depend on scanner/crates/handle
   .cache/circuits/          # circuit artifacts (gitignored)
   .state/                   # chain + engine state (gitignored)
   out/                      # steps, keys (gitignored)
@@ -301,6 +304,17 @@ assume the devenv tools are on `PATH` (direnv or `devenv shell`).
 install.sh → chain.sh → deploy.sh → op.sh create-wallets --names A,B → op.sh fund --eoa 0 --amount 1000
 ```
 
+**`wallets.sh`**
+
+- The accounting demo's first step: `install.sh → chain.sh → deploy.sh →
+  op.sh create-wallets --names A,B → op.sh export-keys`, then print each
+  wallet's `railgunAddress` and `shareableViewingKey` from `out/keys.json`.
+- `create-wallets` calls `startEngine()` → `readDeployment()`, so the chain
+  and deployment must exist first — hence the full setup chain.
+- Idempotent: re-running skips install/chain/deploy/wallet creation.
+- The printed viewing key is what gets pasted into the app UI
+  (`docs/app/spec.md`).
+
 **`op.sh <name> [flags]`**
 
 - Runs `npx tsx src/ops/<name>.ts [flags]` in `demo/`.
@@ -423,16 +437,26 @@ fi
 
 ./op.sh shield --from-eoa 0 --to A --amount 1000
 
+# Product-style memos: the accounting demo narrates these as merchant sales
+# (wallet B is the merchant; see docs/app/spec.md).
+memos=(
+  "2x Espresso"
+  "1x Latte, 1x Croissant, 1x Orange Juice"
+  "2x Sandwich, 2x Coffee"
+  "1x Cake, 3x Latte"
+  "Catering: 10x Coffee, 10x Pastry"
+)
 i=0
 for amt in 10 25 40 60 100; do
   flag=""; (( i % 2 == 0 )) && flag="--show-sender"
-  ./op.sh transfer --from A --to B --amount "$amt" --memo "transfer #$i" $flag
+  ./op.sh transfer --from A --to B --amount "$amt" --memo "${memos[$i]}" $flag
   i=$((i+1))
 done
 
 ./op.sh unshield --from B --to-eoa 2 --amount 50
 ./op.sh balances --wallets A,B --eoas 2
 ./op.sh export-keys
+./op.sh export-logs
 ```
 
 **Ordering detail.** Each transfer op syncs A before proving, so A's change
