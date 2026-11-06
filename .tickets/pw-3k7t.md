@@ -1,6 +1,6 @@
 ---
 id: pw-3k7t
-status: open
+status: closed
 deps: [pw-4hz9, pw-szlj]
 links: []
 created: 2026-11-06T15:44:51Z

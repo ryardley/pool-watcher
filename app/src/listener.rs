@@ -2,5 +2,6 @@
 //! forwarded to the scanner client.
 
 use crate::config::Config;
+use crate::ledger::Ledger;
 
-pub fn spawn(_config: &Config) {}
+pub fn spawn(_config: &Config, _ledger: Ledger) {}
