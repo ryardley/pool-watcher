@@ -6,3 +6,6 @@ out/
 .direnv/
 .wallet1
 .wallet2
+scanner/dist/
+scanner/target/
+scanner/.run/

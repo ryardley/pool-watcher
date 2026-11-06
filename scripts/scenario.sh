@@ -24,3 +24,4 @@ done
 ./op.sh unshield --from B --to-eoa 2 --amount 50
 ./op.sh balances --wallets A,B --eoas 2
 ./op.sh export-keys
+./op.sh export-logs

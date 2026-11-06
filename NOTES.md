@@ -45,3 +45,24 @@
   `deploymentBlock`. Anvil's `--state` reload does not preserve historical
   state for `eth_getCode`, so a binary search for the exact proxy block fails
   after a restart; the pre-deploy block is a safe lower bound for scanning.
+
+## Scanner findings
+
+- **Unshield amount is net.** The contract emits `Unshield(to, token, base,
+  fee)` where `base` is already net of `fee`. The note value that leaves the
+  private balance is `base + fee`, so the scanner reports that as `value`.
+- **Unshield attribution.** The public `Unshield` event has no sender. The
+  scanner attributes it to the wallet that can decrypt a `Transact` note in the
+  same transaction (the change note); otherwise A would see B's unshield.
+- **Change notes decrypt both ways.** A self-note (change) decrypts as both a
+  received and a sent note, so it yields an `in` and an `out` event that cancel
+  in the balance arithmetic.
+- **Engine exports.** `getSharedSymmetricKey`, `poseidon` and `encodeAddress`
+  are not exported from the `@railgun-community/engine` package root, and its
+  `exports` map blocks deep imports. The scanner reimplements the small
+  primitives (X25519 scalar mult + SHA-256, poseidon via circomlibjs, bech32m).
+- **TokenDataGetter.** The engine's `TokenDataGetter` is a class with private
+  fields, so the ERC-20 shim needs one structural cast; it never touches a DB.
+- **Fixture.** `scripts/scenario.sh` now ends with `op.sh export-logs`, which
+  writes `out/logs.json` (the proxy's Shield/Transact/Unshield logs, batched by
+  block) for the scanner tests.

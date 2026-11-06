@@ -6,4 +6,5 @@
     package = pkgs.nodejs_22;
     yarn.enable = true;
   };
+  languages.rust.enable = true;
 }

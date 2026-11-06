@@ -1,0 +1,23 @@
+{
+  "name": "pool-watcher-scanner",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "start": "node dist/index.js",
+    "test": "tsx --test src/*.test.ts"
+  },
+  "dependencies": {
+    "@noble/ed25519": "1.7.5",
+    "@railgun-community/circomlibjs": "0.0.8",
+    "@railgun-community/engine": "9.4.0",
+    "@scure/base": "1.2.6",
+    "ethers": "6.13.1",
+    "msgpack-lite": "0.1.27",
+    "zod": "3.23.8"
+  },
+  "devDependencies": {
+    "tsx": "4.23.15",
+    "typescript": "5.6.3"
+  }
+}

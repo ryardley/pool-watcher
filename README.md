@@ -71,3 +71,6 @@ A scanner needs:
 
 The chain state is in `.state/anvil.json`; restart it with `scripts/chain.sh`
 to keep the full history.
+
+The `scanner/` component consumes these logs: it trial-decrypts them for a
+viewing key and returns the events. See `scanner/README.md`.
