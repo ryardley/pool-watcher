@@ -123,8 +123,8 @@ pub fn spawn(config: &Config) -> ScannerClient {
 }
 
 /// Spawn the client thread with an explicit socket path and connect timeout
-/// (used by tests).
-fn spawn_with(socket: PathBuf, connect_timeout: Duration) -> ScannerClient {
+/// (used by tests and the web route tests).
+pub(crate) fn spawn_with(socket: PathBuf, connect_timeout: Duration) -> ScannerClient {
     let (tx, rx) = mpsc::channel(CHANNEL_CAPACITY);
     std::thread::spawn(move || worker(socket, connect_timeout, rx));
     ScannerClient { tx }

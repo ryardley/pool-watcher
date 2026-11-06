@@ -1,0 +1,16 @@
+{
+  "name": "pool-watcher-app-web",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "build": "esbuild seal.ts --bundle --minify --format=iife --outfile=../static/seal.js"
+  },
+  "dependencies": {
+    "@noble/ciphers": "0.4.1",
+    "@noble/curves": "1.4.2",
+    "@noble/hashes": "1.8.0"
+  },
+  "devDependencies": {
+    "esbuild": "^0.24.0"
+  }
+}

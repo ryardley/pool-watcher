@@ -1,0 +1,81 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Railgun accounting demo</title>
+    <style>
+      :root {
+        color-scheme: light dark;
+      }
+      body {
+        font-family: system-ui, sans-serif;
+        max-width: 42rem;
+        margin: 2rem auto;
+        padding: 0 1rem;
+        line-height: 1.5;
+      }
+      h1 {
+        font-size: 1.4rem;
+      }
+      label {
+        display: block;
+        margin: 1rem 0 0.25rem;
+        font-weight: 600;
+      }
+      textarea {
+        width: 100%;
+        box-sizing: border-box;
+        font-family: ui-monospace, monospace;
+        font-size: 0.9rem;
+        padding: 0.5rem;
+      }
+      button {
+        margin-top: 1rem;
+        padding: 0.5rem 1.25rem;
+        font-size: 1rem;
+      }
+      #status {
+        margin-top: 1rem;
+        padding: 0.75rem;
+        border-radius: 0.25rem;
+        white-space: pre-wrap;
+      }
+      #status.ready {
+        background: #e6f4ea;
+        color: #1e4620;
+      }
+      #status.error {
+        background: #fdecea;
+        color: #7f1d1d;
+      }
+      #status.waiting {
+        background: #fef7e0;
+        color: #7a5b00;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>Railgun accounting demo</h1>
+    <p>
+      Paste a shareable viewing key below. It is sealed in your browser to the
+      scanner's public key and sent as ciphertext only — the app never sees the
+      plaintext key.
+    </p>
+    <form id="init-form">
+      <label for="viewing-key">Viewing key</label>
+      <textarea
+        id="viewing-key"
+        name="viewingKey"
+        rows="3"
+        placeholder="0x…"
+        autocomplete="off"
+        spellcheck="false"
+        required
+      ></textarea>
+      <button type="submit">Initialize scanner</button>
+    </form>
+    <div id="status" class="waiting">Fetching scanner public key…</div>
+    <script src="/seal.js"></script>
+  </body>
+</html>
