@@ -1,33 +1,10 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { randomBytes } from 'node:crypto';
-import { x25519 } from '@noble/curves/ed25519';
-import { hkdf } from '@noble/hashes/hkdf';
-import { sha256 } from '@noble/hashes/sha256';
-import { xchacha20poly1305 } from '@noble/ciphers/chacha';
 import { LocalKeyService, SealedBoxKeyService } from './key-service.js';
+// The real browser bundle: a VK sealed by `app/web/seal.ts` must open here.
+import { seal } from '../../app/web/seal.ts';
 
-const HKDF_INFO = new TextEncoder().encode('railgun-scanner-vk');
-const NONCE_LEN = 24;
 const PUB_LEN = 32;
-
-// Mirrors `app/web/seal.ts`: the browser-side seal the scanner must open.
-function seal(plaintext: string, recipientPubB64: string): string {
-  const recipientPub = Buffer.from(recipientPubB64, 'base64');
-  const ephPriv = x25519.utils.randomPrivateKey();
-  const ephPub = x25519.getPublicKey(ephPriv);
-  const shared = x25519.getSharedSecret(ephPriv, recipientPub);
-  const key = hkdf(sha256, shared, new Uint8Array(0), HKDF_INFO, 32);
-  const nonce = randomBytes(NONCE_LEN);
-  const ciphertext = xchacha20poly1305(key, nonce).encrypt(
-    new TextEncoder().encode(plaintext),
-  );
-  const envelope = new Uint8Array(PUB_LEN + NONCE_LEN + ciphertext.length);
-  envelope.set(ephPub, 0);
-  envelope.set(nonce, PUB_LEN);
-  envelope.set(ciphertext, PUB_LEN + NONCE_LEN);
-  return Buffer.from(envelope).toString('base64');
-}
 
 test('local KeyService decodes base64(viewingKeyHex) to raw key bytes', async () => {
   const hex = '82a57670726976d94063333739366637656631323363393561333838363831613063646636353336353731646539303638646631633735353332376339396635633133336166366264';

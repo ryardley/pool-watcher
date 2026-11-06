@@ -1,6 +1,6 @@
 ---
 id: pw-jwrq
-status: open
+status: closed
 deps: [pw-z7gq, pw-ctx4]
 links: []
 created: 2026-11-06T15:44:51Z
