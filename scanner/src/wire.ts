@@ -34,6 +34,7 @@ export const EventSchema = z.object({
   hash: z.string().nullable(),
   token: z.string(),
   value: z.string(),
+  fee: z.string().nullable(),
   outputType: z.number().nullable(),
   direction: z.enum(['in', 'out']),
   sender: z.string().nullable(),

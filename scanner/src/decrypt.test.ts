@@ -56,6 +56,7 @@ test('A: shield, five transfers out, change notes, no unshield', async () => {
   assert.ok(shield);
   assert.equal(shield.direction, 'in');
   assert.equal(shield.value, '997500000000000000000');
+  assert.equal(shield.fee, null);
   assert.equal(shield.receiver, keys.A.railgunAddress);
   assert.equal(shield.sender, null);
 
@@ -78,6 +79,7 @@ test('A: shield, five transfers out, change notes, no unshield', async () => {
     assert.equal(event.sender, keys.A.railgunAddress);
     assert.equal(event.receiver, keys.B.railgunAddress);
     assert.equal(event.outputType, 0);
+    assert.equal(event.fee, null);
   }
 
   assert.equal(events.filter((e) => e.kind === 'unshield').length, 0);
@@ -113,11 +115,15 @@ test('B: five transfers in with sender visibility, unshield, change note', async
       keys.A.railgunAddress,
     ],
   );
+  for (const event of ins) {
+    assert.equal(event.fee, null);
+  }
 
   const unshield = events.find((e) => e.kind === 'unshield');
   assert.ok(unshield);
   assert.equal(unshield.direction, 'out');
   assert.equal(unshield.value, '50000000000000000000');
+  assert.equal(unshield.fee, '125000000000000000');
   assert.equal(unshield.receiver, EOA2);
   assert.equal(unshield.sender, keys.B.railgunAddress);
 

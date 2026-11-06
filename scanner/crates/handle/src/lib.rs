@@ -53,6 +53,7 @@ pub struct Event {
     pub hash: Option<String>,
     pub token: String,
     pub value: String,
+    pub fee: Option<String>,
     #[serde(rename = "outputType")]
     pub output_type: Option<u64>,
     pub direction: String,

@@ -39,6 +39,7 @@ type EventFields = Pick<
   | 'hash'
   | 'token'
   | 'value'
+  | 'fee'
   | 'outputType'
   | 'direction'
   | 'sender'
@@ -98,6 +99,7 @@ async function shieldEvents(ctx: ScanContext, log: ShieldLog): Promise<Event[]> 
           hash: ByteUtils.nToHex(hash, ByteLength.UINT_256),
           token: tokenData.tokenAddress,
           value: commitment.value.toString(),
+          fee: null,
           outputType: null,
           direction: 'in',
           sender: null,
@@ -168,6 +170,7 @@ async function tryDecryptTransact(
       hash: ByteUtils.nToHex(note.hash, ByteLength.UINT_256),
       token: note.tokenData.tokenAddress,
       value: note.value.toString(),
+      fee: null,
       outputType: note.outputType ?? null,
       direction: isSentNote ? 'out' : 'in',
       sender: note.senderAddressData
@@ -219,6 +222,7 @@ function unshieldEvents(ctx: ScanContext, log: UnshieldLog): Event[] {
       hash: null,
       token: log.args.token.tokenAddress,
       value: value.toString(),
+      fee: log.args.fee.toString(),
       outputType: null,
       direction: 'out',
       sender: ctx.walletAddress,

@@ -61,6 +61,7 @@ fn init_scan_ping_for_wallet_a() {
         .expect("shield event");
     assert_eq!(shield.direction, "in");
     assert_eq!(shield.value, "997500000000000000000");
+    assert!(shield.fee.is_none(), "shield fee must be null");
     assert_eq!(shield.receiver.as_deref(), Some(a.railgun_address.as_str()));
 
     // Five A->B transfers, with memos and sender visibility.
@@ -84,6 +85,7 @@ fn init_scan_ping_for_wallet_a() {
     for event in &outs {
         assert_eq!(event.sender.as_deref(), Some(a.railgun_address.as_str()));
         assert_eq!(event.receiver.as_deref(), Some(keys["B"].railgun_address.as_str()));
+        assert!(event.fee.is_none(), "transact fee must be null");
     }
 
     // B's unshield is not A's: it is attributed to the wallet that can decrypt
@@ -145,6 +147,7 @@ fn scan_for_wallet_b() {
             Some(keys["A"].railgun_address.as_str()),
         ]
     );
+    assert!(ins.iter().all(|e| e.fee.is_none()), "transact fee must be null");
 
     let unshield = events
         .iter()
@@ -152,6 +155,7 @@ fn scan_for_wallet_b() {
         .expect("unshield event");
     assert_eq!(unshield.direction, "out");
     assert_eq!(unshield.value, "50000000000000000000");
+    assert_eq!(unshield.fee.as_deref(), Some("125000000000000000"));
     assert_eq!(unshield.receiver.as_deref(), Some(EOA2));
 
     // Balance arithmetic: received minus unshielded.

@@ -135,6 +135,7 @@ fn acceptance_reconstructs_steps_and_balances() {
                 assert_eq!(event.receiver.as_deref(), Some(step.to.as_str()));
                 // The note value leaving the private balance is the gross amount.
                 assert_eq!(event.value, step.amount);
+                assert_eq!(event.fee, step.fee);
                 b_expected -= amount;
             }
             other => panic!("unknown step kind: {other}"),
