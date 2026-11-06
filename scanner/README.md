@@ -43,11 +43,16 @@ core depends on one interface:
 ```ts
 interface KeyService {
   decrypt(keyCiphertext: string): Promise<Uint8Array>;
+  publicKey(): string;
 }
 ```
 
 `local` (dev): `keyCiphertext` is `base64(viewingKeyHex)`, where `viewingKeyHex`
-is the shareable viewing key. `nitro` is a future build-time implementation.
+is the shareable viewing key; `publicKey()` returns a placeholder. `sealedbox`
+(demo): the scanner generates an X25519 keypair at boot, `publicKey()` returns
+the base64 public key, and `decrypt` opens a sealed box (X25519 + HKDF-SHA256 +
+XChaCha20-Poly1305) to recover the viewing key. `nitro` is a future build-time
+implementation.
 
 ## Tests
 

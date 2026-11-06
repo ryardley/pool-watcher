@@ -8,7 +8,10 @@
     "test": "tsx --test src/*.test.ts"
   },
   "dependencies": {
+    "@noble/ciphers": "0.4.1",
+    "@noble/curves": "1.4.2",
     "@noble/ed25519": "1.7.5",
+    "@noble/hashes": "1.8.0",
     "@railgun-community/circomlibjs": "0.0.8",
     "@railgun-community/engine": "9.4.0",
     "@scure/base": "1.2.6",

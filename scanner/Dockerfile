@@ -11,7 +11,7 @@ RUN npm run build
 
 FROM node:26-alpine
 WORKDIR /app
-ARG KEY_SERVICE=local
+ARG KEY_SERVICE=sealedbox
 ENV KEY_SERVICE=${KEY_SERVICE}
 COPY package.json package-lock.json ./
 RUN npm ci --omit=dev

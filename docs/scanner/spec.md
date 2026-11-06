@@ -180,8 +180,8 @@ Layered, cheapest first. The test bed generates ground-truth history.
 
 - Docker base `node:26-alpine` (fallback `node:24-alpine` if the 2025-era SDK
   misbehaves; no `engines` constraint, deps are pure JS/wasm).
-- `ARG KEY_SERVICE=local` wires the KeyService implementation at build time;
-  the accounting demo builds with `KEY_SERVICE=sealedbox`.
+- `ARG KEY_SERVICE=sealedbox` wires the KeyService implementation at build
+  time (the demo default); dev and tests use `KEY_SERVICE=local`.
 - Entrypoint: single `node dist/index.js` that binds the socket and serves
   the protocol.
 
