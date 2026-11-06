@@ -16,6 +16,7 @@ fi
 rm -f .state/wallets.json
 rm -rf .state/db-* out/
 
+deploy_start_block="$(cast block-number)"
 echo "deploying contracts..."
 (cd vendor/contract && npx hardhat deploy:test --network localhost) \
   2>&1 | tee .state/deploy.log
@@ -34,17 +35,10 @@ if [[ -z "$proxy" || -z "$delegator" || -z "$testERC20" ]]; then
   exit 1
 fi
 
-lo=0
-hi="$(cast block-number)"
-while [[ "$lo" -lt "$hi" ]]; do
-  mid=$(((lo + hi) / 2))
-  if [[ "$(cast code "$proxy" --block "$mid")" != "0x" ]]; then
-    hi="$mid"
-  else
-    lo=$((mid + 1))
-  fi
-done
-deployment_block="$lo"
+# Anvil's --state reload does not keep historical state for eth_getCode, so a
+# binary search for the exact proxy block fails after a restart. The block
+# before deployment is a safe lower bound for scanning.
+deployment_block="$deploy_start_block"
 
 jq -n \
   --arg proxy "$proxy" \

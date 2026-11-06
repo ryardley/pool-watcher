@@ -72,11 +72,19 @@ const artifactStore = new ArtifactStore(
 
 const nodeRequire = createRequire(import.meta.url);
 
-function disableV3(): void {
-  // The pinned contracts repo has no V3 deployment, but the SDK's Hardhat
-  // network config advertises V3 addresses. Disable V3 so loadProvider does
-  // not call the missing token vault.
-  (NETWORK_CONFIG[NETWORK] as { supportsV3: boolean }).supportsV3 = false;
+type MutableNetworkConfig = {
+  supportsV3: boolean;
+  proxyContract: string;
+  relayAdaptContract: string;
+  deploymentBlock: number;
+  baseToken: { wrappedAddress: string };
+};
+
+function applyNetworkConfig(): void {
+  const deployment = readDeployment();
+  const configs: MutableNetworkConfig[] = [
+    NETWORK_CONFIG[NETWORK] as unknown as MutableNetworkConfig,
+  ];
   try {
     const walletMain = nodeRequire.resolve('@railgun-community/wallet');
     const nestedPath = path.join(
@@ -84,16 +92,31 @@ function disableV3(): void {
       '../node_modules/@railgun-community/shared-models',
     );
     const nested = nodeRequire(nestedPath) as {
-      NETWORK_CONFIG: Record<string, { supportsV3: boolean }>;
+      NETWORK_CONFIG: Record<string, MutableNetworkConfig>;
     };
-    nested.NETWORK_CONFIG[NETWORK].supportsV3 = false;
+    configs.push(nested.NETWORK_CONFIG[NETWORK]);
   } catch {
     // No nested shared-models copy.
+  }
+  for (const config of configs) {
+    // The pinned contracts repo has no V3 deployment, but the SDK's Hardhat
+    // config advertises V3 addresses. Disable V3 so loadProvider does not call
+    // the missing token vault.
+    config.supportsV3 = false;
+    // Use the addresses actually deployed on this chain.
+    config.proxyContract = deployment.proxy;
+    if (deployment.relayAdapt) {
+      config.relayAdaptContract = deployment.relayAdapt;
+    }
+    if (deployment.weth9) {
+      config.baseToken.wrappedAddress = deployment.weth9;
+    }
+    config.deploymentBlock = deployment.deploymentBlock;
   }
 }
 
 export async function startEngine(): Promise<void> {
-  disableV3();
+  applyNetworkConfig();
   await startRailgunEngine(
     'poolwatcher',
     leveldown(DB_PATH),

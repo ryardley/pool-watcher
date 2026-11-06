@@ -41,3 +41,7 @@
   (not base64).
 - **Deploy output parsing.** The last field of Hardhat's `DEPLOY CONFIG` object
   has no trailing comma; `deploy.sh` parses addresses with an optional suffix.
+- **Deployment block.** `deploy.sh` records the block before `deploy:test` as
+  `deploymentBlock`. Anvil's `--state` reload does not preserve historical
+  state for `eth_getCode`, so a binary search for the exact proxy block fails
+  after a restart; the pre-deploy block is a safe lower bound for scanning.
