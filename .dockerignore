@@ -1,0 +1,14 @@
+.git
+.devenv*
+.direnv
+.cache
+.state
+out
+.ralph
+.wallet1
+.wallet2
+**/node_modules
+**/target
+scanner/dist
+scanner/.run
+app/static/seal.js
