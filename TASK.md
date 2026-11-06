@@ -1,6 +1,7 @@
 # Task: pool-watcher — RAILGUN transaction-history test bed (NixOS, devenv, Anvil)
 
-This replaces all earlier versions of these instructions and all amendments.
+You do not have access outside of this folder to do anything. Do not attempt to access. you have devenv installed. 
+
 
 ## Principle
 
