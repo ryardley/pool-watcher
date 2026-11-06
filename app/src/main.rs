@@ -24,7 +24,7 @@ async fn main() -> Result<()> {
         config.deployment.proxy,
         config.deployment.deployment_block,
     );
-    scanner::spawn(&config);
+    let _scanner = scanner::spawn(&config);
     let ledger = ledger::Ledger::new();
     ledger.write(&config.ledger_path)?;
     listener::spawn(&config, ledger);

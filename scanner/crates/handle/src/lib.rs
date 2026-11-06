@@ -91,6 +91,17 @@ impl Scan {
 }
 
 #[derive(Debug, Serialize)]
+pub struct Pubkey {
+    pub op: &'static str,
+}
+
+impl Default for Pubkey {
+    fn default() -> Self {
+        Self { op: "pubkey" }
+    }
+}
+
+#[derive(Debug, Serialize)]
 pub struct Ping {
     pub op: &'static str,
 }
@@ -115,6 +126,13 @@ pub struct Events {
 }
 
 #[derive(Debug, Clone, Deserialize)]
+pub struct PubkeyResponse {
+    pub op: String,
+    #[serde(rename = "publicKey")]
+    pub public_key: String,
+}
+
+#[derive(Debug, Clone, Deserialize)]
 pub struct Pong {
     pub op: String,
 }
@@ -135,6 +153,10 @@ pub enum Response {
     },
     Events {
         events: Vec<Event>,
+    },
+    Pubkey {
+        #[serde(rename = "publicKey")]
+        public_key: String,
     },
     Pong,
     Error {
@@ -241,6 +263,18 @@ impl Handle {
             Response::Error { message } => Err(HandleError::Protocol(message)),
             other => Err(HandleError::Protocol(format!(
                 "unexpected response to scan: {other:?}"
+            ))),
+        }
+    }
+
+    /// Fetch the scanner's X25519 public key (base64) so a client can seal a
+    /// viewing key to it.
+    pub fn pubkey(&mut self) -> Result<String, HandleError> {
+        match self.request(&Pubkey::default())? {
+            Response::Pubkey { public_key } => Ok(public_key),
+            Response::Error { message } => Err(HandleError::Protocol(message)),
+            other => Err(HandleError::Protocol(format!(
+                "unexpected response to pubkey: {other:?}"
             ))),
         }
     }

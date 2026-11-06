@@ -1,6 +1,6 @@
 ---
 id: pw-ixzj
-status: open
+status: closed
 deps: [pw-szlj]
 links: []
 created: 2026-11-06T15:44:51Z
